@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111210">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>NewVision Insight — Private Experience Study</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+:root{color-scheme:dark;--bg:#111210;--gold:#bca580;--grey:#a7a49b;--line:rgba(190,169,134,.23)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg)}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:72px 22px;font-family:Arial,Helvetica,sans-serif;color:#f1f1ee;background:radial-gradient(ellipse at 50% 48%,#191b19 0%,#111210 43%,#0d0f0d 100%);-webkit-font-smoothing:antialiased}
+.shell{position:relative;width:100%;max-width:390px;text-align:center;padding:24px 8px 22px}
+.shell:before,.shell:after{content:"";position:absolute;width:20px;height:20px;border-color:#847457;opacity:.66}
+.shell:before{border-left:1px solid;border-top:1px solid;top:0;left:-16px}
+.shell:after{border-right:1px solid;border-bottom:1px solid;bottom:0;right:-16px}
+.logo{font:400 38px/1.2 Georgia,'Times New Roman',serif;letter-spacing:.19em;margin-left:.19em;color:#edece8}
+.brand{font:600 8px/1.5 Arial,sans-serif;letter-spacing:.43em;color:var(--gold);margin-top:17px}
+.section-name{display:flex;align-items:center;gap:15px;justify-content:center;margin-top:42px;text-transform:uppercase;font:10px Georgia,serif;letter-spacing:.32em;color:#86847b}.section-name:before,.section-name:after{content:"";height:1px;width:23px;background:var(--gold);opacity:.7}
+h1{font:400 24px/1.35 Arial,Helvetica,sans-serif;letter-spacing:-.03em;margin:32px 0 10px}h1 em{font:italic 24px/1.35 Georgia,serif;color:var(--gold)}
+.lead{max-width:320px;margin:0 auto 26px;color:#a9aaa4;font-size:12px;line-height:1.9}
+.access-form{text-align:left;max-width:330px;margin:auto}
+.code{background:rgba(255,255,255,.012);border:1px solid #564e3d;color:#eeeae2;letter-spacing:.12em;font-size:13px;padding:16px 19px;width:100%;height:53px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s}
+.code:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(188,165,128,.12)}
+.code::placeholder{color:#66675f;letter-spacing:.19em;font-size:11px}
+.consent{display:flex;align-items:start;gap:11px;color:#a7a59d;font-size:10px;line-height:1.65;margin:17px 0 19px}
+.consent input{appearance:none;margin:3px 0 0;flex:none;width:13px;height:13px;border:1px solid #b8afa1;border-radius:1px;cursor:pointer;position:relative}
+.consent input:checked{background:var(--gold);border-color:var(--gold)}.consent input:checked:after{content:'✓';position:absolute;top:-5px;left:2px;color:#131511;font-size:15px}
+.consent a{color:var(--gold);text-underline-offset:3px;text-decoration:underline}.consent a:hover{color:#dfcaab}
+.enter{border:1px solid var(--gold);background:var(--gold);color:#111210;letter-spacing:.13em;text-transform:uppercase;font-size:10px;font-weight:700;height:46px;width:100%;border-radius:3px;cursor:pointer;transition:background .2s}
+.enter:hover{background:#d2bb96}.enter:disabled{opacity:.65;cursor:wait}
+.error{min-height:24px;margin:12px auto 0;text-align:center;color:#eebeb1;font-size:11px;line-height:1.6}
+.privacy{border-top:1px solid rgba(255,255,255,.09);margin:35px auto 0;padding:20px 0 0;max-width:330px;text-align:center;color:#898a85;font-size:10px;line-height:1.9}
+.privacy strong{color:#b4b6ad;font-weight:500}
+@media(max-width:450px){body{padding:45px 27px}.shell:before{left:-8px}.shell:after{right:-8px}h1,h1 em{font-size:21px}.section-name{margin-top:35px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="shell">
+<div class="logo" aria-label="NVI">NVI</div>
+<div class="brand">NEWVISION INSIGHT</div>
+<div class="section-name">Private Experience Study</div>
+<h1>A private space, <em>opened for you.</em></h1>
+<p class="lead">Enter the unique access key provided to you to view your confidential study.</p>
+<form class="access-form" id="access-form">
+<input class="code" id="access-key" type="password" name="password" placeholder="NVI — •••• — •••• — ••••" autocomplete="off" minlength="12" maxlength="256" aria-label="Private access key" required autofocus>
+<label class="consent"><input type="checkbox" id="consent" required><span>I agree to keep this portal strictly confidential and not to reproduce, copy, distribute or share its contents, in whole or in part, or its access credentials, without prior written authorisation from NewVision Insight.</span></label>
+<button class="enter" type="submit" id="submit">ENTER THE STUDY</button>
+<div class="error" id="error" aria-live="polite" role="status"></div>
+</form>
+<div class="privacy"><strong>Private NVI portal.</strong> Access is restricted to authorised recipients. The confidentiality commitment must be accepted before entry.</div>
+</main>
+<script>
+'use strict';
+const form=document.getElementById('access-form'),btn=document.getElementById('submit'),err=document.getElementById('error');
+form.addEventListener('submit',async e=>{
+ e.preventDefault();err.textContent='';
+ const password=document.getElementById('access-key').value;
+ if(!document.getElementById('consent').checked || !password) return;
+ btn.disabled=true;btn.textContent='VERIFYING ACCESS…';
+ try{
+  const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({password,acceptedConfidentiality:document.getElementById('consent').checked}),cache:'no-store'});
+  const answer=await r.json();
+  if(!r.ok || !answer.ok)throw new Error(answer.message||'Access could not be verified.');
+  window.location.assign('/rapport.html#maison');
+ }catch(e){err.textContent=e.message||'Unable to access this study. Please try again.';btn.disabled=false;btn.textContent='ENTER THE STUDY';}
+});
+</script>
+</body></html>
